@@ -18,16 +18,25 @@ let web3Modal = null;
 let provider = null;
 let web3 = null;
 let providerOptions = {
+  // walletconnect: {
+  //   package: WalletConnectProvider,
+  //   options: {
+  //     infuraId: "8cb16bcb42ca4118adfe40b2fe703286"
+  //   }
+  // },
   walletconnect: {
     package: WalletConnectProvider,
     options: {
-      infuraId: "8cb16bcb42ca4118adfe40b2fe703286"
+      rpc: {
+         56: 'https://bsc-dataseed.binance.org/'
+      },
+      network: 'binance',
     }
-  },
+  }
 };
 
 web3Modal = new Web3Modal({
-  network: netId,
+  // network: netId,
   cacheProvider: true,
   providerOptions,
   disableInjectedProvider: false
