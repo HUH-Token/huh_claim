@@ -251,7 +251,7 @@ function App() {
           <br />
           <span>Total Amount</span>
           <input
-            value={Number(totalAmount).toFixed(3) + " BNB"}
+            value={Number(totalAmount).toFixed(3) + " HUH"}
             onChange={() => { }}
             disabled
           />
