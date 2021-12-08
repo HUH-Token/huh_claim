@@ -94,12 +94,11 @@ section {
   border-color: white;
   padding: 1rem 0rem;
   text-align: center;
-  font-size: 1.5rem;
+  font-size: 1.875rem;
   line-height: 1;
   font-weight: 700;
   background: transparent;
   color: white;
-  width: 90%;
 }
 
 .inner-contain input:focus {
@@ -176,7 +175,7 @@ section {
     font-size: 1.0625rem;
   }
   .inner-contain input {
-    padding: 0.8rem 0rem;
+    padding: 0.8rem 1rem;
     font-size: .9375rem;
   }
   .inner-contain button {
