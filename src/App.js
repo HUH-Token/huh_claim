@@ -9,12 +9,10 @@ import WalletConnectProvider from "@walletconnect/web3-provider";
 
 // Import ABI
 import TokenVesting from './contract/Vesting.json';
-import PancakePair from './contract/Pair.json';
 
 import WalletBox from './components/WalletBox';
 
 let vestingContractAddress = "0xeaEd594B5926A7D5FBBC61985390BaAf936a6b8d";
-let pancakePairAddress = "0xffc490824111e59f06630e39a36Bc9Fa9F9C1E53";
 let netId = 56;
 let web3Modal = null;
 let provider = null;
@@ -207,23 +205,12 @@ function App() {
     }
   }
 
-  const getPairWBNBToHUH = async () => {
-    const pair = new web3.eth.Contract(PancakePair, pancakePairAddress);
-    const reserves = await pair.methods.getReserves().call();
-    const bnbReverse = web3.utils.fromWei(reserves[1], 'ether');
-    const huhReverse = web3.utils.fromWei(reserves[0], 'shannon');
-    const ratio = huhReverse / bnbReverse;
-    return ratio;
-  }
-
   const withdraw = async (lockId) => {
     try {
       const tokenVesting = new web3.eth.Contract(TokenVesting, vestingContractAddress);
       const amount = await getWithdrawableTokens(tokenVesting, lockId);
       const fromWei = web3.utils.fromWei(amount, 'ether');
-      const ratio = await getPairWBNBToHUH();
-      const fromWeiToHUH = ratio * fromWei
-      setTotalAmount(fromWeiToHUH);
+      setTotalAmount(fromWei);
       await tokenVesting.methods.withdraw(lockId, amount).send({ from: walletAddress })
         .on('transactionHash', function (hash) {
           console.log("allowance hash: ", hash);
@@ -261,8 +248,6 @@ function App() {
               setLockId(event.target.value);
             }}
           />
-          <br />
-          <br />
           <br />
           <span>Total Amount</span>
           <input
