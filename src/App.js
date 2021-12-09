@@ -28,7 +28,7 @@ let providerOptions = {
     package: WalletConnectProvider,
     options: {
       rpc: {
-         56: 'https://bsc-dataseed.binance.org/'
+        56: 'https://bsc-dataseed.binance.org/'
       },
       network: 'binance',
     }
@@ -47,6 +47,7 @@ function App() {
   const [walletAddress, setWalletAddress] = useState(null);
   const [networkId, setNetworkId] = useState(null);
   const [totalAmount, setTotalAmount] = useState(0);
+  const [amount, setAmount] = useState(1);
   const [lockId, setLockId] = useState('');
 
   useEffect(() => {
@@ -205,13 +206,40 @@ function App() {
     }
   }
 
+  const removeExtraSpace = (s) => s.trim().split(/ +/).join(' ')
+
+  const handleLockId = async (e) => {
+    // const constAmount = amount;
+    // console.log(constAmount)
+    const value = e.target.value;
+    const lockId = removeExtraSpace(value);
+    setLockId(lockId);
+    // const am = amount;
+    // console.log(value);
+    // console.log(am);
+    // console.log(lockId);
+    try {
+      const tokenVest = new web3.eth.Contract(TokenVesting, vestingContractAddress);
+      const withdrawableTokens = await getWithdrawableTokens(tokenVest, lockId);
+      setAmount(withdrawableTokens);
+      console.log(withdrawableTokens);
+      const fromWei = web3.utils.fromWei(withdrawableTokens, 'ether');
+      console.log(fromWei);
+      setTotalAmount(fromWei);
+      // let customer = await this.service.getCustomer(customerCode);
+      // this.setState({ customer });
+
+    } catch (err) {
+      errorAlert(err.message);
+      return null;
+    }
+  }
+
   const withdraw = async (lockId) => {
     try {
       const tokenVesting = new web3.eth.Contract(TokenVesting, vestingContractAddress);
-      const amount = await getWithdrawableTokens(tokenVesting, lockId);
-      const fromWei = web3.utils.fromWei(amount, 'ether');
-      setTotalAmount(fromWei);
-      await tokenVesting.methods.withdraw(lockId, amount).send({ from: walletAddress })
+      const am = amount;
+      await tokenVesting.methods.withdraw(lockId, am).send({ from: walletAddress })
         .on('transactionHash', function (hash) {
           console.log("allowance hash: ", hash);
         })
@@ -244,9 +272,7 @@ function App() {
           <span>Input LockID</span>
           <input
             value={lockId}
-            onChange={(event) => {
-              setLockId(event.target.value);
-            }}
+            onChange={handleLockId}
           />
           <br />
           <span>Total Amount</span>
