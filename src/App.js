@@ -12,6 +12,7 @@ import TokenVesting from './contract/Vesting.json';
 
 import WalletBox from './components/WalletBox';
 
+const huhTokenAddress = "0xc15e89f2149bCC0cBd5FB204C9e77fe878f1e9b2";
 let vestingContractAddress = "0xeaEd594B5926A7D5FBBC61985390BaAf936a6b8d";
 let netId = 56;
 let web3Modal = null;
@@ -206,23 +207,59 @@ function App() {
     }
   }
 
+  const getUserLocksForTokenLength = async (tokenContract, payee_address, token_address) => {
+    try {
+      const result = await tokenContract.methods.getUserLocksForTokenLength(payee_address, token_address).call();
+      return result;
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  const getUserLockIDForTokenAtIndex = async (tokenContract, payee_address, token_address, index) => {
+    try {
+      const result = await tokenContract.methods.getUserLockIDForTokenAtIndex(payee_address, token_address, index).call();
+      return result;
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
   const removeExtraSpace = (s) => s.trim().split(/ +/).join(' ')
+
+  const range = (s, e) => Array.from('x'.repeat(e - s), (_, i) => s + i);
 
   const handleLockId = async (e) => {
     // const constAmount = amount;
     // console.log(constAmount)
     const value = e.target.value;
     const lockId = removeExtraSpace(value);
+    const wallet = walletAddress;
     setLockId(lockId);
+    if (lockId == "")
+      return;
     // const am = amount;
     // console.log(value);
     // console.log(am);
     // console.log(lockId);
     try {
       const tokenVest = new web3.eth.Contract(TokenVesting, vestingContractAddress);
+      // console.log(wallet);
+      const myLocksLength = await getUserLocksForTokenLength(tokenVest, wallet, huhTokenAddress);
+      // console.log(myLocksLength);
+      const locks = await Promise.all(range(0, myLocksLength).map(async index => {
+        return await getUserLockIDForTokenAtIndex(tokenVest, wallet, huhTokenAddress, index)
+      }));
+      // console.log("Locks found: " + locks);
+      const myLockId = locks.filter(lock => lock == lockId);
+      if (myLockId.length != 1){
+        throw Error("Lock not found!");
+      }
+      successAlert("Lock found!");
+      console.log(myLockId);
       const withdrawableTokens = await getWithdrawableTokens(tokenVest, lockId);
       setAmount(withdrawableTokens);
-      console.log(withdrawableTokens);
+      // console.log(withdrawableTokens);
       const fromWei = web3.utils.fromWei(withdrawableTokens, 'ether');
       console.log(fromWei);
       setTotalAmount(fromWei);
