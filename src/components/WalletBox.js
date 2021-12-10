@@ -11,13 +11,13 @@ const WalletBox = (props) => {
         }
       }}
     >
-      <img src="img/new/wallet-logo.svg" />
+      <img src="img/new/wallet-logo.svg" alt="Wallet Logo" />
       {
         walletAddress ?
-          <img src="img/new/wallet-connect.svg" /> :
-          <img src="img/new/wallet-disconnect.svg" />
+          <img src="img/new/wallet-connect.svg" alt="Wallet Connect"/> :
+          <img src="img/new/wallet-disconnect.svg" alt="Wallet Disconnect"/>
       }
-      <img src="img/new/wallet-box.svg" />
+      <img src="img/new/wallet-box.svg" alt="Wallet Box"/>
     </div>
   )
 }
