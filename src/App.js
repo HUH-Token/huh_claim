@@ -14,6 +14,7 @@ import WalletBox from './components/WalletBox';
 
 const huhTokenAddress = "0xc15e89f2149bCC0cBd5FB204C9e77fe878f1e9b2";
 let vestingContractAddress = "0xeaEd594B5926A7D5FBBC61985390BaAf936a6b8d";
+let tokenVest;
 let netId = 56;
 let web3Modal = null;
 let provider = null;
@@ -50,6 +51,7 @@ function App() {
   const [totalAmount, setTotalAmount] = useState(0);
   const [amount, setAmount] = useState(1);
   const [lockId, setLockId] = useState('');
+  const [lockIds, setLockIds] = useState('');
 
   const errorAlert = useCallback(async (msg) => {
     toast.error(msg, {
@@ -163,6 +165,15 @@ const connect = async () => {
         setWalletAddress(null);
       } else {
         successAlert("Wallet Connected!");
+        tokenVest = new web3.eth.Contract(TokenVesting, vestingContractAddress);
+        // console.log(wallet);
+        const myLocksLength = await getUserLocksForTokenLength(tokenVest, accounts[0], huhTokenAddress);
+        // console.log(myLocksLength);
+        const locks = await Promise.all(range(0, myLocksLength).map(async index => {
+          return await getUserLockIDForTokenAtIndex(tokenVest, accounts[0], huhTokenAddress, index)
+        }));
+        setLockIds(locks);
+        successAlert("Locks found:" + locks);
       }
     }
   } else {
@@ -234,7 +245,8 @@ const handleLockId = async (e) => {
   // console.log(constAmount)
   const value = e.target.value;
   const lockId = removeExtraSpace(value);
-  const wallet = walletAddress;
+  const locks = lockIds;
+  console.log(locks);
   setLockId(lockId);
   if (lockId === "")
     return;
@@ -245,19 +257,12 @@ const handleLockId = async (e) => {
   try {
     if (walletAddress == null)
       throw Error("Conect the wallet first by clicking on the red link between the HUH logo and the wallet icon...")
-    const tokenVest = new web3.eth.Contract(TokenVesting, vestingContractAddress);
-    // console.log(wallet);
-    const myLocksLength = await getUserLocksForTokenLength(tokenVest, wallet, huhTokenAddress);
-    // console.log(myLocksLength);
-    const locks = await Promise.all(range(0, myLocksLength).map(async index => {
-      return await getUserLockIDForTokenAtIndex(tokenVest, wallet, huhTokenAddress, index)
-    }));
     // console.log("Locks found: " + locks);
     const myLockId = locks.filter(lock => lock === lockId);
     if (myLockId.length !== 1) {
       throw Error("Lock not found!");
     }
-    successAlert("Lock found!");
+    successAlert("Lock found");
     console.log(myLockId);
     const withdrawableTokens = await getWithdrawableTokens(tokenVest, lockId);
     setAmount(withdrawableTokens);
