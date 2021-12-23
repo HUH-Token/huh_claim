@@ -245,7 +245,6 @@ const handleLockId = async (e) => {
   // console.log(constAmount)
   const value = e.target.value;
   const lockId = removeExtraSpace(value);
-  const wallet = walletAddress;
   const locks = lockIds;
   console.log(locks);
   setLockId(lockId);
