@@ -1,0 +1,205 @@
+#root {
+  height: 100%;
+}
+:root {
+  --primary-font: 'Jost', sans-serif;
+  --secondary-font: 'Poppins', sans-serif;
+  --h1-size: 4rem;
+  --h1-weight: 900;
+  --h2-size: 3rem;
+  --h2-weight: 700;
+  --h3-size: 2rem;
+  --h3-weight: 600;
+  --h4-size: 1.5rem;
+  --h4-weight: 600;
+  --h5-size: 1.2rem;
+  --h5-weight: 600;
+  --h6-size: 1rem;
+  --h6-weight: 600;
+  --p-size: 1rem;
+  --p-weight: 400;
+  --header-bg-color: #121117;
+  --nav-brand-height: 55px;
+  --top-nav-item-color: #f5f5f5;
+  --nav-item-color: #121117;
+  --primary-color: #4528DC;
+  --secondary-color: #57048A;
+  --white-color: #f9f9f9;
+  --black-color: #040402;
+  --grey-color: #f3f5f7;
+  --dark-grey-color: #191919;
+  --primary-t-color: #f5f5f5;
+  --secondary-t-color: #f5f5f5;
+  --primary-p-color: #8E8E8E;
+  --secondary-p-color: #E1E1E1;
+  --primary-b-color: #f5f5f5;
+  --primary-l-color: rgba(0, 0, 0, .12);
+  --secondary-l-color: rgba(255, 255, 255, 0.12);
+  --valid-color: #007a4d;
+  --invalid-color: #e34f4f;
+  --primary-bg-color: #002AD8;
+}
+body {
+  font-family: 'Urbanist', sans-serif;
+  height: 100%;
+  overflow: hidden;
+  background: linear-gradient(180deg, #052999 0%, #0A2864 100%);
+}
+
+section {
+  width: 100%;
+  height: 100vh;
+  padding: 100px 0px;
+}
+
+.contain {
+  position: relative;
+  border: 2px solid #0031FF;
+  box-sizing: border-box;
+  border-radius: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+  margin-top: 50px;
+  max-width: 40rem;
+  padding: 80px 50px;
+}
+
+.inner-contain {
+  width: 90%;
+  background: rgba(0,49,255,1);
+  border-radius: 1.5rem;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 100px 0px;
+}
+
+.inner-contain span {
+  font-size: 2rem;
+  line-height: 30px;
+  font-weight: 700;
+  letter-spacing: -.02rem;
+  color: #FFDE00;
+  padding-bottom: 10px;
+}
+
+.inner-contain input {
+  border-radius: 9999px;
+  border-width: 1px;
+  border-color: white;
+  padding: 1rem 0rem;
+  text-align: center;
+  font-size: 0.7 rem;
+  line-height: 1;
+  font-weight: 700;
+  background: transparent;
+  color: white;
+}
+
+.inner-contain input:focus {
+  outline: none;
+}
+
+.inner-contain button {
+  display: inline-block;
+  height: 54px;
+  color: #FFDE00;
+  font-size: 28px;
+  text-decoration: none;
+  font-family: 'Teko', sans-serif;
+  font-weight: 500;
+  background: #0A2864;
+  border: solid 2px #FFDE00;
+  box-shadow: 10px 10px 0px 0px #FFDE00, 10px 10px 0px 2px #FFDE00;
+  letter-spacing: 2px;
+  position: absolute;
+  bottom: -27px;
+  margin-left: auto;
+  margin-right: auto;
+  left: 0;
+  right: 0;
+  width: 250px;
+  cursor: pointer;
+}
+
+.inner-contain button:hover {
+  color: #0A2864;
+  background: #FFDE00;
+  border-color: #0A2864;
+  box-shadow: 10px 10px 0px 0px #0A2864, 10px 10px 0px 2px #FFDE00;
+}
+
+.wallet-connect {
+  position: absolute;
+  top: -45px;
+  left: calc(50% - 85px);
+  width: 168px;
+  padding: 13px 15px 13px 15px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+  background: #0031FF;
+  border: 2px solid #0031FF;
+  box-sizing: border-box;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.wallet-connect img:nth-child(1) {
+  width: 44.8px;
+}
+.wallet-connect img:nth-child(2) {
+  margin-right: 0px;
+}
+
+
+@media (max-width: 992px) {
+  section {
+    padding: 100px 0px;
+  }
+  .contain {
+    padding: 50px 10px;
+    max-width: 20rem;
+    border-radius: 20px;
+  }
+  .inner-contain {
+    padding: 50px 0px;
+  }
+  .inner-contain span {
+    font-size: 1.0625rem;
+  }
+  .inner-contain input {
+    padding: 0.8rem 1rem;
+    font-size: .9375rem;
+  }
+  .inner-contain button {
+    height: 40px;
+    width: 150px;
+    font-size: 1rem;
+    bottom: -20px;
+    box-shadow: 5px 5px 0px 0px #FFDE00, 5px 5px 0px 2px #FFDE00;
+  }
+  .wallet-connect {
+    padding: 12px;
+    border-radius: 5px;
+    width: auto;
+    top: -35px;
+    left: calc(50% - 63px);
+  }
+  .wallet-connect img:nth-child(1) {
+    width: 30px;
+  }
+  .wallet-connect img:nth-child(2) {
+    margin: 5px;
+  }
+  .wallet-connect img:nth-child(3) {
+    width: 30px;
+  }
+
+}
