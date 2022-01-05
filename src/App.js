@@ -6,12 +6,15 @@ import 'react-toastify/dist/ReactToastify.css';
 import Web3 from 'web3';
 import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
+import Select from "react-select";
+import makeAnimated from "react-select/animated";
 
 // Import ABI
 import TokenVesting from './contract/Vesting.json';
 
 import WalletBox from './components/WalletBox';
 
+const animatedComponents = makeAnimated();
 const huhTokenAddress = "0xc15e89f2149bCC0cBd5FB204C9e77fe878f1e9b2";
 let vestingContractAddress = "0xeaEd594B5926A7D5FBBC61985390BaAf936a6b8d";
 let tokenVest;
@@ -67,6 +70,52 @@ function App() {
     format();
   }, [])
 
+  const successAlert = useCallback((msg) => {
+    toast.success(msg, {
+      position: "top-right",
+      theme: 'colored',
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+    format();
+  }, [])
+
+  const walletConnectedReaction = useCallback(async (accounts, networkId) => {
+    if (networkId !== netId) {
+      errorAlert("Failed to connect BSC mainnet");
+      setWalletAddress(null);
+    } else {
+      successAlert("Wallet Connected!");
+      tokenVest = new web3.eth.Contract(TokenVesting, vestingContractAddress);
+      // console.log(wallet);
+      const myLocksLength = await getUserLocksForTokenLength(tokenVest, accounts[0], huhTokenAddress);
+      // console.log(myLocksLength);
+      const locks = await Promise.all(range(0, myLocksLength).map(async index => {
+        return await getUserLockIDForTokenAtIndex(tokenVest, accounts[0], huhTokenAddress, index)
+      }));
+      if (locks.length === 0){
+        errorAlert("No locks found!")
+        return
+      }
+      const lockSelectionOptions = locks.map(lockNumber => {
+        return { value: lockNumber, label: lockNumber }
+      })
+      // const options = [
+      //   { value: "apple", label: "Apple" },
+      //   { value: "orange", label: "Orange" },
+      //   { value: "grape", label: "Grape" }
+      // ];
+      setLockIds(lockSelectionOptions);
+      successAlert("Locks found:" + locks);
+    }
+  }, [errorAlert, successAlert])
+
+
+
   const cachedConnect = useCallback(async () => {
     if (web3Modal.cachedProvider) {
       let hasProvider;
@@ -84,14 +133,10 @@ function App() {
         setWalletAddress(accounts[0])
         const _networkId = await web3.eth.net.getId();
         // setNetworkId(_networkId)
-
-        if (_networkId !== netId) {
-          errorAlert("Failed to connect BSC mainnet");
-          setWalletAddress(null);
-        }
+        await walletConnectedReaction(accounts, _networkId)
       }
     }
-  }, [errorAlert])
+  }, [walletConnectedReaction])
 
   useEffect(() => {
     cachedConnect();
@@ -104,20 +149,6 @@ function App() {
       })();
     }
   }, [providerSrc])
-
-  const successAlert = (msg) => {
-    toast.success(msg, {
-      position: "top-right",
-      theme: 'colored',
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
-    format();
-  }
 
   const warningAlert = (msg) => {
     toast.warning(msg, {
@@ -158,23 +189,7 @@ const connect = async () => {
       const accounts = await web3.eth.getAccounts();
       setWalletAddress(accounts[0])
       const _networkId = await web3.eth.net.getId();
-      // setNetworkId(_networkId)
-
-      if (_networkId !== netId) {
-        errorAlert("Failed to connect BSC mainnet");
-        setWalletAddress(null);
-      } else {
-        successAlert("Wallet Connected!");
-        tokenVest = new web3.eth.Contract(TokenVesting, vestingContractAddress);
-        // console.log(wallet);
-        const myLocksLength = await getUserLocksForTokenLength(tokenVest, accounts[0], huhTokenAddress);
-        // console.log(myLocksLength);
-        const locks = await Promise.all(range(0, myLocksLength).map(async index => {
-          return await getUserLockIDForTokenAtIndex(tokenVest, accounts[0], huhTokenAddress, index)
-        }));
-        setLockIds(locks);
-        successAlert("Locks found:" + locks);
-      }
+      await walletConnectedReaction(accounts, _networkId)
     }
   } else {
     console.log("web3Modal is null");
@@ -236,19 +251,15 @@ const getUserLockIDForTokenAtIndex = async (tokenContract, payee_address, token_
   }
 }
 
-const removeExtraSpace = (s) => s.trim().split(/ +/).join(' ')
-
 const range = (s, e) => Array.from('x'.repeat(e - s), (_, i) => s + i);
 
 const handleLockId = async (e) => {
   // const constAmount = amount;
   // console.log(constAmount)
-  const value = e.target.value;
-  const lockId = removeExtraSpace(value);
-  const locks = lockIds;
-  console.log(locks);
-  setLockId(lockId);
-  if (lockId === "")
+  const myLockId = e.value;
+  // console.log(locks);
+  setLockId(myLockId);
+  if (myLockId === "")
     return;
   // const am = amount;
   // console.log(value);
@@ -258,13 +269,9 @@ const handleLockId = async (e) => {
     if (walletAddress == null)
       throw Error("Connect the wallet first by clicking on the red link between the HUH logo and the wallet icon...")
     // console.log("Locks found: " + locks);
-    const myLockId = locks.filter(lock => lock === lockId);
-    if (myLockId.length !== 1) {
-      throw Error("Lock not found!");
-    }
-    successAlert("Lock found");
+    successAlert("Lock " + myLockId + " found");
     console.log(myLockId);
-    const withdrawableTokens = await getWithdrawableTokens(tokenVest, lockId);
+    const withdrawableTokens = await getWithdrawableTokens(tokenVest, myLockId);
     setAmount(withdrawableTokens);
     // console.log(withdrawableTokens);
     const fromWei = web3.utils.fromWei(withdrawableTokens, 'ether');
@@ -313,12 +320,9 @@ return (
         disConnect={disConnect}
       />
       <div className="inner-contain">
-        <span>Input LockID</span>
-        <input
-          value={lockId}
-          onChange={handleLockId}
-        />
-        <br />
+        <span>Select Input LockID</span>
+        <Select options={lockIds} components={animatedComponents} onChange={handleLockId}/>
+        &nbsp;
         <span>Total Amount</span>
         <input
           value={Number(totalAmount * 1E9).toFixed(9) + " HUH"}
