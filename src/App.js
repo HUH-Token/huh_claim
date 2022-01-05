@@ -161,7 +161,7 @@ const connect = async () => {
       // setNetworkId(_networkId)
 
       if (_networkId !== netId) {
-        errorAlert("Failed to connect BSC testnet");
+        errorAlert("Failed to connect BSC mainnet");
         setWalletAddress(null);
       } else {
         successAlert("Wallet Connected!");
@@ -256,7 +256,7 @@ const handleLockId = async (e) => {
   // console.log(lockId);
   try {
     if (walletAddress == null)
-      throw Error("Conect the wallet first by clicking on the red link between the HUH logo and the wallet icon...")
+      throw Error("Connect the wallet first by clicking on the red link between the HUH logo and the wallet icon...")
     // console.log("Locks found: " + locks);
     const myLockId = locks.filter(lock => lock === lockId);
     if (myLockId.length !== 1) {
