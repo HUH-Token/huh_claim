@@ -50,11 +50,10 @@ web3Modal = new Web3Modal({
 function App() {
   const [providerSrc, setProviderSrc] = useState(null);
   const [walletAddress, setWalletAddress] = useState(null);
-  // const [_, setNetworkId] = useState(null);
   const [totalAmount, setTotalAmount] = useState(0);
   const [amount, setAmount] = useState(1);
-  const [lockId, setLockId] = useState('');
-  const [lockIds, setLockIds] = useState('');
+  const [lockId, setLockId] = useState(null);
+  const [lockIds, setLockIds] = useState([]);
 
   const errorAlert = useCallback(async (msg) => {
     toast.error(msg, {
@@ -104,11 +103,6 @@ function App() {
       const lockSelectionOptions = locks.map(lockNumber => {
         return { value: lockNumber, label: lockNumber }
       })
-      // const options = [
-      //   { value: "apple", label: "Apple" },
-      //   { value: "orange", label: "Orange" },
-      //   { value: "grape", label: "Grape" }
-      // ];
       setLockIds(lockSelectionOptions);
       successAlert("Locks found:" + locks);
     }
@@ -254,32 +248,20 @@ const getUserLockIDForTokenAtIndex = async (tokenContract, payee_address, token_
 const range = (s, e) => Array.from('x'.repeat(e - s), (_, i) => s + i);
 
 const handleLockId = async (e) => {
-  // const constAmount = amount;
-  // console.log(constAmount)
   const myLockId = e.value;
-  // console.log(locks);
   setLockId(myLockId);
   if (myLockId === "")
     return;
-  // const am = amount;
-  // console.log(value);
-  // console.log(am);
-  // console.log(lockId);
   try {
     if (walletAddress == null)
       throw Error("Connect the wallet first by clicking on the red link between the HUH logo and the wallet icon...")
-    // console.log("Locks found: " + locks);
     successAlert("Lock " + myLockId + " found");
     console.log(myLockId);
     const withdrawableTokens = await getWithdrawableTokens(tokenVest, myLockId);
     setAmount(withdrawableTokens);
-    // console.log(withdrawableTokens);
     const fromWei = web3.utils.fromWei(withdrawableTokens, 'ether');
     console.log(fromWei);
     setTotalAmount(fromWei);
-    // let customer = await this.service.getCustomer(customerCode);
-    // this.setState({ customer });
-
   } catch (err) {
     errorAlert(err.message);
     return null;
