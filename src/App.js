@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -15,9 +15,7 @@ import TokenVesting from './contract/Vesting.json';
 import WalletBox from './components/WalletBox';
 import {vestingContractAddress, getUserLockIDForTokenAtIndex, getUserLocksForTokenLength, getWithdrawableTokens, LOCKS} from './components/VestingContractHelpers'
 import range from './components/Range';
-import Table from "./components/Table";
-import axios from 'axios';
-
+import MuiTable from './components/MuiTable';
 
 const animatedComponents = makeAnimated();
 const huhTokenAddress = "0xc15e89f2149bCC0cBd5FB204C9e77fe878f1e9b2";
@@ -51,125 +49,6 @@ web3Modal = new Web3Modal({
   disableInjectedProvider: false
 })
 
-const Genres = ({ values }) => {
-  // Loop through the array and create a badge-like component instead of a comma-separated string
-  return (
-    <>
-      {values.map((genre, idx) => {
-        return (
-          <span key={idx} className="badge">
-            {genre}
-          </span>
-        );
-      })}
-    </>
-  );
-};
-
-function LockIdDetails(props) {
-  const [data, setData] = useState([]);
-  useEffect(() => {
-    (async () => {
-      const result = await axios("https://api.tvmaze.com/search/shows?q=snow");
-      setData(result.data);
-      console.log(result.data);
-    })();
-  }, []);
-  const columns = useMemo(
-    () => [
-      {
-        // first group - TV Show
-        Header: "TV Show",
-        // First group columns
-        columns: [
-          {
-            Header: "Name",
-            accessor: "show.name"
-          },
-          {
-            Header: "Type",
-            accessor: "show.type"
-          }
-        ]
-      },
-      {
-        Header: "Details",
-        columns: [
-          {
-            Header: "Language",
-            accessor: "show.language"
-          },
-          {
-            Header: "Genre(s)",
-            accessor: "show.genres",
-            // Cell method will provide the cell value; we pass it to render a custom component
-            Cell: ({ cell: { value } }) => <Genres values={value} />
-          },
-          {
-            Header: "Runtime",
-            accessor: "show.runtime",
-            // Cell method will provide the value of the cell; we can create a custom element for the Cell        
-            Cell: ({ cell: { value } }) => {
-              const hour = Math.floor(value / 60);
-              const min = Math.floor(value % 60);
-              return (
-                <>
-                  {hour > 0 ? `${hour} hr${hour > 1 ? "s" : ""} ` : ""}
-                  {min > 0 ? `${min} min${min > 1 ? "s" : ""}` : ""}
-                </>
-              );
-            }
-          },
-          {
-            Header: "Status",
-            accessor: "show.status"
-          }
-        ]
-      }
-    ],
-    []
-  );
-
-  return (
-    <div className="App">
-      <Table columns={columns} data={data} />
-    </div>
-  );
-
-  // const [data, setData] = useState([]);
-  // useEffect(() => {
-  //   (async () => {
-  //     const result = await axios("https://api.tvmaze.com/search/shows?q=snow");
-  //     setData(result.data);
-  //   })();
-  // }, []);
-  // return (
-  //   <div className="App"></div>
-  // );
-  // if (props.lockId === null)
-  //   return null;
-  // return (
-  //   <>
-  //     <span>LockId Details</span>
-  //     <input
-  //       value={props.startEmissionDate}
-  //       onChange={() => { }}
-  //       disabled
-  //     />
-  //     <input
-  //       value={props.endEmissionDate}
-  //       onChange={() => { }}
-  //       disabled
-  //     />
-  //     <input
-  //       value={" HUH"}
-  //       onChange={() => { }}
-  //       disabled
-  //     />
-  //   </>
-  // );
-}
-
 function App() {
   const [providerSrc, setProviderSrc] = useState(null);
   const [walletAddress, setWalletAddress] = useState(null);
@@ -177,8 +56,7 @@ function App() {
   const [amount, setAmount] = useState(1);
   const [lockId, setLockId] = useState(null);
   const [lockIds, setLockIds] = useState([]);
-  const [startEmissionDate, setStartEmissionDate] = useState(null);
-  const [endEmissionDate, setEndEmissionDate] = useState(null);
+  const [selectedLockInfo, setSelectedLockInfo] = useState(null);
 
   const errorAlert = useCallback(async (msg) => {
     toast.error(msg, {
@@ -357,13 +235,14 @@ const handleLockId = async (e) => {
     // console.log(selectedLockInfo.owner);
     // console.log(selectedLockInfo.sharesDeposited);
     // console.log(selectedLockInfo.sharesWithdrawn);
-    const startEmissionDate = new Date(selectedLockInfo.startEmission*1000);
-    const endEmissionDate = new Date(selectedLockInfo.endEmission*1000);
-    setStartEmissionDate(startEmissionDate);
-    setEndEmissionDate(endEmissionDate);
+    setSelectedLockInfo(selectedLockInfo);
+    // const startEmissionDate = new Date(selectedLockInfo.startEmission*1000);
+    // const endEmissionDate = new Date(selectedLockInfo.endEmission*1000);
+    // setStartEmissionDate(startEmissionDate);
+    // setEndEmissionDate(endEmissionDate);
     setLockId(myLockId);
-    console.log(startEmissionDate);
-    console.log(endEmissionDate);
+    // console.log(startEmissionDate);
+    // console.log(endEmissionDate);
     // console.log(selectedLockInfo.startEmission);
     // console.log(selectedLockInfo.tokenAddress);
     const withdrawableTokens = await getWithdrawableTokens(tokenVest, myLockId);
@@ -403,7 +282,12 @@ const withdraw = async (lockId) => {
 }
 
 return (
-  <section className="huh-claim-section">
+  <section 
+    className="huh-claim-section"
+    style={{
+      paddingTop: 50
+    }}
+  >
     <div className="contain">
       <WalletBox
         walletAddress={walletAddress}
@@ -414,10 +298,11 @@ return (
         <span>Select Input LockID</span>
         <Select options={lockIds} components={animatedComponents} onChange={handleLockId}/>
         &nbsp;
-        <LockIdDetails lockId={lockId} startEmissionDate={startEmissionDate} endEmissionDate={endEmissionDate}/>
-        <span>Total Amount</span>
+        {/* <LockIdDetails lockId={lockId} startEmissionDate={startEmissionDate} endEmissionDate={endEmissionDate}/> */}
+        <MuiTable selectedLockInfo={selectedLockInfo}/>
+        <span>Claimable Amount</span>
         <input
-          value={Number(totalAmount * 1E9).toFixed(9) + " HUH"}
+          value={"  " + Number(totalAmount * 1E9).toFixed(9) + " HUH  "}
           onChange={() => { }}
           disabled
         />
