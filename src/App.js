@@ -146,28 +146,28 @@ function LockIdDetails(props) {
   // return (
   //   <div className="App"></div>
   // );
-  if (props.lockId === null)
-    return null;
-  return (
-    <>
-      <span>LockId Details</span>
-      <input
-        value={props.startEmissionDate}
-        onChange={() => { }}
-        disabled
-      />
-      <input
-        value={props.endEmissionDate}
-        onChange={() => { }}
-        disabled
-      />
-      <input
-        value={" HUH"}
-        onChange={() => { }}
-        disabled
-      />
-    </>
-  );
+  // if (props.lockId === null)
+  //   return null;
+  // return (
+  //   <>
+  //     <span>LockId Details</span>
+  //     <input
+  //       value={props.startEmissionDate}
+  //       onChange={() => { }}
+  //       disabled
+  //     />
+  //     <input
+  //       value={props.endEmissionDate}
+  //       onChange={() => { }}
+  //       disabled
+  //     />
+  //     <input
+  //       value={" HUH"}
+  //       onChange={() => { }}
+  //       disabled
+  //     />
+  //   </>
+  // );
 }
 
 function App() {
