@@ -13,10 +13,12 @@ import makeAnimated from "react-select/animated";
 import TokenVesting from './contract/Vesting.json';
 
 import WalletBox from './components/WalletBox';
+import {vestingContractAddress, getUserLockIDForTokenAtIndex, getUserLocksForTokenLength, getWithdrawableTokens, LOCKS} from './components/VestingContractHelpers'
+import range from './components/Range';
+import MuiTable from './components/MuiTable';
 
 const animatedComponents = makeAnimated();
 const huhTokenAddress = "0xc15e89f2149bCC0cBd5FB204C9e77fe878f1e9b2";
-let vestingContractAddress = "0xeaEd594B5926A7D5FBBC61985390BaAf936a6b8d";
 let tokenVest;
 let netId = 56;
 let web3Modal = null;
@@ -54,6 +56,7 @@ function App() {
   const [amount, setAmount] = useState(1);
   const [lockId, setLockId] = useState(null);
   const [lockIds, setLockIds] = useState([]);
+  const [selectedLockInfo, setSelectedLockInfo] = useState(null);
 
   const errorAlert = useCallback(async (msg) => {
     toast.error(msg, {
@@ -218,45 +221,30 @@ const disConnect = async () => {
   }
 }
 
-const getWithdrawableTokens = async (tokenContract, lockId) => {
-  try {
-    const result = await tokenContract.methods.getWithdrawableTokens(lockId).call();
-    return result;
-  } catch (err) {
-    console.log(err)
-  }
-}
-
-const getUserLocksForTokenLength = async (tokenContract, payee_address, token_address) => {
-  try {
-    const result = await tokenContract.methods.getUserLocksForTokenLength(payee_address, token_address).call();
-    return result;
-  } catch (err) {
-    console.log(err)
-  }
-}
-
-const getUserLockIDForTokenAtIndex = async (tokenContract, payee_address, token_address, index) => {
-  try {
-    const result = await tokenContract.methods.getUserLockIDForTokenAtIndex(payee_address, token_address, index).call();
-    return result;
-  } catch (err) {
-    console.log(err)
-  }
-}
-
-const range = (s, e) => Array.from('x'.repeat(e - s), (_, i) => s + i);
-
 const handleLockId = async (e) => {
   const myLockId = e.value;
-  setLockId(myLockId);
-  if (myLockId === "")
-    return;
   try {
     if (walletAddress == null)
       throw Error("Connect the wallet first by clicking on the red link between the HUH logo and the wallet icon...")
     successAlert("Lock " + myLockId + " found");
     console.log(myLockId);
+    const selectedLockInfo = await LOCKS(tokenVest, myLockId);
+    // console.log(selectedLockInfo.condition);
+    // console.log(selectedLockInfo.endEmission);
+    // console.log(selectedLockInfo.lockID);
+    // console.log(selectedLockInfo.owner);
+    // console.log(selectedLockInfo.sharesDeposited);
+    // console.log(selectedLockInfo.sharesWithdrawn);
+    setSelectedLockInfo(selectedLockInfo);
+    // const startEmissionDate = new Date(selectedLockInfo.startEmission*1000);
+    // const endEmissionDate = new Date(selectedLockInfo.endEmission*1000);
+    // setStartEmissionDate(startEmissionDate);
+    // setEndEmissionDate(endEmissionDate);
+    setLockId(myLockId);
+    // console.log(startEmissionDate);
+    // console.log(endEmissionDate);
+    // console.log(selectedLockInfo.startEmission);
+    // console.log(selectedLockInfo.tokenAddress);
     const withdrawableTokens = await getWithdrawableTokens(tokenVest, myLockId);
     setAmount(withdrawableTokens);
     const fromWei = web3.utils.fromWei(withdrawableTokens, 'ether');
@@ -294,7 +282,12 @@ const withdraw = async (lockId) => {
 }
 
 return (
-  <section className="huh-claim-section">
+  <section 
+    className="huh-claim-section"
+    style={{
+      paddingTop: 50
+    }}
+  >
     <div className="contain">
       <WalletBox
         walletAddress={walletAddress}
@@ -305,7 +298,9 @@ return (
         <span>Select Input LockID</span>
         <Select options={lockIds} components={animatedComponents} onChange={handleLockId}/>
         &nbsp;
-        <span>Total Amount</span>
+        {/* <LockIdDetails lockId={lockId} startEmissionDate={startEmissionDate} endEmissionDate={endEmissionDate}/> */}
+        <MuiTable selectedLockInfo={selectedLockInfo}/>
+        <span>Claimable Amount</span>
         <input
           value={Number(totalAmount * 1E9).toFixed(9) + " HUH"}
           onChange={() => { }}
