@@ -163,6 +163,10 @@ section {
   margin-bottom: 30px;
 }
 
+.mui-table {
+  width: 100%
+}
+
 @media (max-width: 992px) {
   .contain {
     padding: 50px 10px;
