@@ -28,7 +28,11 @@ export default function DenseTable(props) {
   const classes = useStyles();
   const {selectedLockInfo} = props;
   if (props.selectedLockInfo === null)
-    return null
+    return(
+      <>
+      &nbsp;
+      </>
+    )
   const classifyLockId = (startEmission, endEmission) => {
     console.log(startEmission)
     console.log(endEmission)
@@ -50,6 +54,8 @@ export default function DenseTable(props) {
     )
   ];
   return (
+    <div >
+    <span className="inner-contain span">LockID Details</span>
     <TableContainer component={Paper} sx={{ maxHeight: 450 }}>
       <Table sx={{ minWidth: 550 }} size="small" aria-label="a dense table">
         <TableHead>
@@ -85,5 +91,6 @@ export default function DenseTable(props) {
         </TableBody>
       </Table>
     </TableContainer>
+    </div>
   );
 }
