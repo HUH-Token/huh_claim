@@ -54,11 +54,11 @@ export default function DenseTable(props) {
       <Table sx={{ minWidth: 550 }} size="small" aria-label="a dense table">
         <TableHead>
           <TableRow >
-            <TableCell align="center">Shares Deposited</TableCell>
-            <TableCell align="center">Shares Withdrawn %</TableCell>
-            <TableCell align="center">Start Emission Date</TableCell>
-            <TableCell align="center">End Emission Date</TableCell>
-            <TableCell align="center">Classification</TableCell>
+            <TableCell align="center">Total HUH</TableCell>
+            <TableCell align="center">HUH Withdrawn %</TableCell>
+            <TableCell align="center">Vesting Start</TableCell>
+            <TableCell align="center">Vesting End</TableCell>
+            <TableCell align="center">Description</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
