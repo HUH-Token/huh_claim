@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useMemo, useEffect, useState, useCallback } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -15,6 +15,9 @@ import TokenVesting from './contract/Vesting.json';
 import WalletBox from './components/WalletBox';
 import {vestingContractAddress, getUserLockIDForTokenAtIndex, getUserLocksForTokenLength, getWithdrawableTokens, LOCKS} from './components/VestingContractHelpers'
 import range from './components/Range';
+import Table from "./components/Table";
+import axios from 'axios';
+
 
 const animatedComponents = makeAnimated();
 const huhTokenAddress = "0xc15e89f2149bCC0cBd5FB204C9e77fe878f1e9b2";
@@ -48,9 +51,103 @@ web3Modal = new Web3Modal({
   disableInjectedProvider: false
 })
 
+const Genres = ({ values }) => {
+  // Loop through the array and create a badge-like component instead of a comma-separated string
+  return (
+    <>
+      {values.map((genre, idx) => {
+        return (
+          <span key={idx} className="badge">
+            {genre}
+          </span>
+        );
+      })}
+    </>
+  );
+};
+
 function LockIdDetails(props) {
+  const [data, setData] = useState([]);
+  useEffect(() => {
+    (async () => {
+      const result = await axios("https://api.tvmaze.com/search/shows?q=snow");
+      setData(result.data);
+      console.log(result.data);
+    })();
+  }, []);
+  const columns = useMemo(
+    () => [
+      {
+        // first group - TV Show
+        Header: "TV Show",
+        // First group columns
+        columns: [
+          {
+            Header: "Name",
+            accessor: "show.name"
+          },
+          {
+            Header: "Type",
+            accessor: "show.type"
+          }
+        ]
+      },
+      {
+        Header: "Details",
+        columns: [
+          {
+            Header: "Language",
+            accessor: "show.language"
+          },
+          {
+            Header: "Genre(s)",
+            accessor: "show.genres",
+            // Cell method will provide the cell value; we pass it to render a custom component
+            Cell: ({ cell: { value } }) => <Genres values={value} />
+          },
+          {
+            Header: "Runtime",
+            accessor: "show.runtime",
+            // Cell method will provide the value of the cell; we can create a custom element for the Cell        
+            Cell: ({ cell: { value } }) => {
+              const hour = Math.floor(value / 60);
+              const min = Math.floor(value % 60);
+              return (
+                <>
+                  {hour > 0 ? `${hour} hr${hour > 1 ? "s" : ""} ` : ""}
+                  {min > 0 ? `${min} min${min > 1 ? "s" : ""}` : ""}
+                </>
+              );
+            }
+          },
+          {
+            Header: "Status",
+            accessor: "show.status"
+          }
+        ]
+      }
+    ],
+    []
+  );
+
+  return (
+    <div className="App">
+      <Table columns={columns} data={data} />
+    </div>
+  );
+
+  // const [data, setData] = useState([]);
+  // useEffect(() => {
+  //   (async () => {
+  //     const result = await axios("https://api.tvmaze.com/search/shows?q=snow");
+  //     setData(result.data);
+  //   })();
+  // }, []);
+  // return (
+  //   <div className="App"></div>
+  // );
   if (props.lockId === null)
-    return null
+    return null;
   return (
     <>
       <span>LockId Details</span>
