@@ -227,14 +227,12 @@ const handleLockId = async (e) => {
     if (walletAddress == null)
       throw Error("Connect the wallet first by clicking on the red link between the HUH logo and the wallet icon...")
     successAlert("Lock " + myLockId + " found");
-    console.log(myLockId);
     const selectedLockInfo = await LOCKS(tokenVest, myLockId);
     setSelectedLockInfo(selectedLockInfo);
     setLockId(myLockId);
     const withdrawableTokens = await getWithdrawableTokens(tokenVest, myLockId);
     setAmount(withdrawableTokens);
     const fromWei = web3.utils.fromWei(withdrawableTokens, 'ether');
-    console.log(fromWei);
     setTotalAmount(fromWei);
   } catch (err) {
     errorAlert(err.message);

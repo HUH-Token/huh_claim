@@ -34,8 +34,6 @@ export default function DenseTable(props) {
       </>
     )
   const classifyLockId = (startEmission, endEmission) => {
-    console.log(startEmission)
-    console.log(endEmission)
     // eslint-disable-next-line eqeqeq
     if (startEmission == 1638741535 && endEmission == 1646006400)
       return ['Presale']
