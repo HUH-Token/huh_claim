@@ -26,11 +26,11 @@ const useStyles = makeStyles({
 
 export default function DenseTable(props) {
   const classes = useStyles();
-  const {selectedLockInfo} = props;
+  const { selectedLockInfo } = props;
   if (props.selectedLockInfo === null)
-    return(
+    return (
       <>
-      &nbsp;
+        &nbsp;
       </>
     )
   const classifyLockId = (startEmission, endEmission) => {
@@ -46,51 +46,51 @@ export default function DenseTable(props) {
   }
   const rows = [
     createData(
-      selectedLockInfo.sharesDeposited/1E9,
-      (selectedLockInfo.sharesWithdrawn/selectedLockInfo.sharesDeposited*100).toFixed(2),
-      (new Date(selectedLockInfo.startEmission*1000)).toLocaleString(),
-      (new Date(selectedLockInfo.endEmission*1000)).toLocaleString(),
+      selectedLockInfo.sharesDeposited / 1E9,
+      (selectedLockInfo.sharesWithdrawn / selectedLockInfo.sharesDeposited * 100).toFixed(2),
+      (new Date(selectedLockInfo.startEmission * 1000)).toLocaleString(),
+      (new Date(selectedLockInfo.endEmission * 1000)).toLocaleString(),
       classifyLockId(selectedLockInfo.startEmission, selectedLockInfo.endEmission)
     )
   ];
   return (
-    <div >
-    <span className="inner-contain span">LockID Details</span>
-    <TableContainer component={Paper} sx={{ maxHeight: 450 }}>
-      <Table sx={{ minWidth: 550 }} size="small" aria-label="a dense table">
-        <TableHead>
-          <TableRow >
-            <TableCell align="center">Total HUH</TableCell>
-            <TableCell align="center">HUH Withdrawn %</TableCell>
-            <TableCell align="center">Vesting Start</TableCell>
-            <TableCell align="center">Vesting End</TableCell>
-            <TableCell align="center">Description</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((row, idx) => (
-            <TableRow
-              key={idx}
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <TableCell component="th" scope="row">
-                {row.name}
-              </TableCell>
-              <TableCell align="center">{row.type}</TableCell>
-              <TableCell align="center">{row.lang}</TableCell>
-              <TableCell align="center">{row.runtime}</TableCell>
-              <TableCell align="center">
-                {row.genre.map((item, index) => {
-                  return (
-                    <div className={classes.genre} key={index}>{item}</div>
-                  )
-                })}
-              </TableCell>
+    <div className='mui-table'>
+      <span className="inner-contain span">LockID Details</span>
+      <TableContainer component={Paper} sx={{ maxHeight: 450 }}>
+        <Table sx={{ minWidth: 550 }} size="small" aria-label="a dense table">
+          <TableHead>
+            <TableRow >
+              <TableCell align="center">Total HUH</TableCell>
+              <TableCell align="center">HUH Withdrawn %</TableCell>
+              <TableCell align="center">Vesting Start</TableCell>
+              <TableCell align="center">Vesting End</TableCell>
+              <TableCell align="center">Description</TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+          </TableHead>
+          <TableBody>
+            {rows.map((row, idx) => (
+              <TableRow
+                key={idx}
+                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+              >
+                <TableCell component="th" scope="row">
+                  {row.name}
+                </TableCell>
+                <TableCell align="center">{row.type}</TableCell>
+                <TableCell align="center">{row.lang}</TableCell>
+                <TableCell align="center">{row.runtime}</TableCell>
+                <TableCell align="center">
+                  {row.genre.map((item, index) => {
+                    return (
+                      <div className={classes.genre} key={index}>{item}</div>
+                    )
+                  })}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </div>
   );
 }
