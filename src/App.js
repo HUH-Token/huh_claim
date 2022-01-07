@@ -302,7 +302,7 @@ return (
         <MuiTable selectedLockInfo={selectedLockInfo}/>
         <span>Claimable Amount</span>
         <input
-          value={"  " + Number(totalAmount * 1E9).toFixed(9) + " HUH  "}
+          value={Number(totalAmount * 1E9).toFixed(9) + " HUH"}
           onChange={() => { }}
           disabled
         />
