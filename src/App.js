@@ -229,22 +229,8 @@ const handleLockId = async (e) => {
     successAlert("Lock " + myLockId + " found");
     console.log(myLockId);
     const selectedLockInfo = await LOCKS(tokenVest, myLockId);
-    // console.log(selectedLockInfo.condition);
-    // console.log(selectedLockInfo.endEmission);
-    // console.log(selectedLockInfo.lockID);
-    // console.log(selectedLockInfo.owner);
-    // console.log(selectedLockInfo.sharesDeposited);
-    // console.log(selectedLockInfo.sharesWithdrawn);
     setSelectedLockInfo(selectedLockInfo);
-    // const startEmissionDate = new Date(selectedLockInfo.startEmission*1000);
-    // const endEmissionDate = new Date(selectedLockInfo.endEmission*1000);
-    // setStartEmissionDate(startEmissionDate);
-    // setEndEmissionDate(endEmissionDate);
     setLockId(myLockId);
-    // console.log(startEmissionDate);
-    // console.log(endEmissionDate);
-    // console.log(selectedLockInfo.startEmission);
-    // console.log(selectedLockInfo.tokenAddress);
     const withdrawableTokens = await getWithdrawableTokens(tokenVest, myLockId);
     setAmount(withdrawableTokens);
     const fromWei = web3.utils.fromWei(withdrawableTokens, 'ether');
@@ -297,8 +283,6 @@ return (
       <div className="inner-contain">
         <span>Select Input LockID</span>
         <Select options={lockIds} components={animatedComponents} onChange={handleLockId}/>
-        &nbsp;
-        {/* <LockIdDetails lockId={lockId} startEmissionDate={startEmissionDate} endEmissionDate={endEmissionDate}/> */}
         <MuiTable selectedLockInfo={selectedLockInfo}/>
         <span>Claimable Amount</span>
         <input
