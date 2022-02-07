@@ -200,7 +200,7 @@ const subscribeProvider = async (provider) => {
   provider.on("accountsChanged", async (accounts) => {
     setWalletAddress(accounts[0]);
   });
-  provider.on("networkChanged", async (networkId) => {
+  provider.on("chainChanged", async (networkId) => {
     // setNetworkId(networkId);
   });
 };
@@ -232,9 +232,10 @@ const handleLockId = async (e) => {
     setLockId(myLockId);
     const withdrawableTokens = await getWithdrawableTokens(tokenVest, myLockId);
     setAmount(withdrawableTokens);
-    const fromWei = web3.utils.fromWei(withdrawableTokens, 'ether');
+    const fromWei = web3.utils.fromWei(withdrawableTokens.toString(), 'ether');
     setTotalAmount(fromWei);
   } catch (err) {
+    console.log(err)
     errorAlert(err.message);
     return null;
   }
