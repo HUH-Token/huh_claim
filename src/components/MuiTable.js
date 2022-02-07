@@ -40,6 +40,9 @@ export default function DenseTable(props) {
     // eslint-disable-next-line eqeqeq
     if (startEmission == 1646006400 && endEmission == 1656374400)
       return ['Dev Wallet']
+    // eslint-disable-next-line eqeqeq
+    if (startEmission == 1638741535 && endEmission == 1656374400)
+      return ['Presale + Dev Wallet']
     return []
   }
   const rows = [
